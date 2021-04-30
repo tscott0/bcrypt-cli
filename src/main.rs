@@ -1,6 +1,11 @@
 use clap::{App, AppSettings, Arg};
 use std::process::exit;
 
+const HASH_SUBCOMMAND: &'static str = "hash";
+const VERIFY_SUBCOMMAND: &'static str = "verify";
+const COST_ARG: &'static str = "cost";
+const PASSWORD_ARG: &'static str = "password";
+
 fn main() {
     let matches = App::new("Bcrypt Hash CLI")
         .version("0.1.0")
@@ -9,50 +14,54 @@ fn main() {
         .setting(AppSettings::VersionlessSubcommands)
         .setting(AppSettings::ColoredHelp)
         .subcommand(
-            App::new("hash")
+            App::new(HASH_SUBCOMMAND)
                 .setting(AppSettings::ColoredHelp)
                 .about("Hash a password with bcrypt")
                 .arg(
-                    Arg::new("cost")
+                    Arg::new(COST_ARG)
                         .short('c')
-                        .long("cost")
+                        .long(COST_ARG)
                         .about("Cost of bcrypt hash algorithm")
                         .default_value(bcrypt::DEFAULT_COST.to_string().as_str())
                         .takes_value(true),
                 )
                 .arg(
-                    Arg::new("password")
+                    Arg::new(PASSWORD_ARG)
                         .required(true)
                         .about("password to hash"),
                 ),
         )
         .subcommand(
-            App::new("verify")
+            App::new(VERIFY_SUBCOMMAND)
                 .setting(AppSettings::ColoredHelp)
                 .about("Verify a password using a bcrypt hash")
                 .arg(
-                    Arg::new("password")
+                    Arg::new(PASSWORD_ARG)
                         .required(true)
                         .about("password to verify"),
                 )
-                .arg(Arg::new("hash").required(true).about("hash to compare")),
+                .arg(
+                    Arg::new(HASH_SUBCOMMAND)
+                        .required(true)
+                        .about("hash to compare"),
+                ),
         )
         .get_matches();
 
-    if let Some(m) = matches.subcommand_matches("hash") {
+    if let Some(m) = matches.subcommand_matches(HASH_SUBCOMMAND) {
         let cost = m
-            .value_of("cost")
+            .value_of(COST_ARG)
             .and_then(|c| c.parse::<u32>().ok())
             .unwrap_or(bcrypt::DEFAULT_COST);
 
-        if let Some(p) = m.value_of("password") {
+        if let Some(p) = m.value_of(PASSWORD_ARG) {
             hash(p, cost)
         }
     };
 
-    if let Some(m) = matches.subcommand_matches("verify") {
-        if let Some(p) = m.value_of("password") {
-            if let Some(h) = m.value_of("hash") {
+    if let Some(m) = matches.subcommand_matches(VERIFY_SUBCOMMAND) {
+        if let Some(p) = m.value_of(PASSWORD_ARG) {
+            if let Some(h) = m.value_of(HASH_SUBCOMMAND) {
                 verify(p, h)
             }
         }
