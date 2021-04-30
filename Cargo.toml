@@ -1,0 +1,9 @@
+[package]
+name = "bcrypt-cli"
+version = "0.1.0"
+authors = ["Tom Scott <tom.scott1@sainsburys.co.uk>"]
+edition = "2018"
+
+[dependencies]
+bcrypt = "0.9.0"
+clap = "3.0.0-beta.2"
