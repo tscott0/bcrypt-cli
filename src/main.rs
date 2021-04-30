@@ -17,7 +17,7 @@ fn main() {
                         .short('c')
                         .long("cost")
                         .about("Cost of bcrypt hash algorithm")
-                        .default_value("12")
+                        .default_value(bcrypt::DEFAULT_COST.to_string().as_str())
                         .takes_value(true),
                 )
                 .arg(
@@ -43,7 +43,7 @@ fn main() {
         let cost = m
             .value_of("cost")
             .and_then(|c| c.parse::<u32>().ok())
-            .unwrap_or(12);
+            .unwrap_or(bcrypt::DEFAULT_COST);
 
         if let Some(p) = m.value_of("password") {
             hash(p, cost)
