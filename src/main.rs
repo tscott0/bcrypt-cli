@@ -29,7 +29,7 @@ fn main() {
         .subcommand(
             App::new("verify")
                 .setting(AppSettings::ColoredHelp)
-                .about("Hash a password with bcrypt")
+                .about("Verify a password using a bcrypt hash")
                 .arg(
                     Arg::new("password")
                         .required(true)
